@@ -37,17 +37,26 @@ const connectDatabase = async () => {
     console.error('✗ MongoDB Connection Error:', {
       message: error.message,
       code: error.code,
+      name: error.name,
       timestamp: new Date().toISOString(),
     });
 
-    if (NODE_ENV === 'production') {
-      // In production, exit the process on connection failure
-      process.exit(1);
-    } else {
-      // In development, log detailed error for debugging
-      console.error('Full error details:', error);
-      throw error;
+    // Log more detailed error info for debugging
+    if (error.message.includes('ECONNREFUSED')) {
+      console.error('  → Connection refused: Check if MongoDB is running and accessible');
     }
+    if (error.message.includes('authentication failed')) {
+      console.error('  → Authentication failed: Check username and password in MONGO_DB_URI');
+    }
+    if (error.message.includes('getaddrinfo ENOTFOUND')) {
+      console.error('  → DNS resolution failed: Check the hostname in MONGO_DB_URI');
+    }
+    if (error.message.includes('EACCES') || error.message.includes('EPERM')) {
+      console.error('  → Permission denied: Check IP whitelist on MongoDB Atlas');
+    }
+
+    // In serverless environment, don't exit - just throw the error
+    throw error;
   }
 };
 

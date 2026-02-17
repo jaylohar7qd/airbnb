@@ -3,8 +3,6 @@
  * This file serves as the entry point for Vercel's serverless function
  */
 
-require('dotenv').config();
-
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
@@ -22,17 +20,33 @@ const { setupConnectionListeners, connectDatabase } = require("../config/databas
 const { errorHandler, asyncHandler, AppError } = require("../middleware/errorHandler");
 const { requestLogger } = require("../middleware/requestLogger");
 
-// Environment variables
+// Environment variables (Vercel provides these automatically)
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'production';
-const SESSION_SECRET = process.env.SESSION_SECRET || 'default-secret-key';
+const SESSION_SECRET = process.env.SESSION_SECRET;
+const MONGO_DB_URI = process.env.MONGO_DB_URI;
 const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
 const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE) || 5242880;
+
+// Validate required environment variables
+const requiredEnvVars = ['SESSION_SECRET', 'MONGO_DB_URI'];
+const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingEnvVars.length > 0) {
+  console.error(`✗ Missing required environment variables: ${missingEnvVars.join(', ')}`);
+  console.error('Please add these to Vercel project settings.');
+}
 
 const app = express();
 
 // ========== Logging ==========
 console.log(`🚀 Starting Airbnb App in ${NODE_ENV} mode`);
+console.log(`\n📋 Environment Variables Status:`);
+console.log(`  - NODE_ENV: ${NODE_ENV}`);
+console.log(`  - SESSION_SECRET: ${SESSION_SECRET ? '✓ Set' : '✗ MISSING'}`);
+console.log(`  - MONGO_DB_URI: ${MONGO_DB_URI ? '✓ Set' : '✗ MISSING'}`);
+console.log(`  - MAX_FILE_SIZE: ${MAX_FILE_SIZE}`);
+console.log(`  - UPLOAD_DIR: ${UPLOAD_DIR}\n`);
 
 // ========== View Engine Setup ==========
 app.set('view engine', 'ejs');
@@ -141,6 +155,24 @@ app.use((req, res, next) => {
 // Connect to database once at startup
 let dbConnected = false;
 
+// ========== Health Check Endpoint (BEFORE error handlers) ==========
+app.get('/api/health', (req, res) => {
+  try {
+    res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      environment: NODE_ENV,
+      uptime: process.uptime(),
+      mongoDbConnected: dbConnected
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      message: err.message
+    });
+  }
+});
+
 const ensureDbConnection = async (req, res, next) => {
   if (!dbConnected) {
     try {
@@ -180,15 +212,5 @@ app.use(errorsController.pageNotFound);
 
 // ========== Global Error Handler ==========
 app.use(errorHandler);
-
-// ========== Health Check Endpoint ==========
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    environment: NODE_ENV,
-    uptime: process.uptime()
-  });
-});
 
 module.exports = app;
