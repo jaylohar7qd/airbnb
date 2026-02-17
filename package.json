@@ -1,0 +1,29 @@
+{
+  "name": "my_web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tailwindcss -i ./public/input.css -o ./public/output.css --watch",
+    "start": "nodemon app.js"
+  },
+  "author": "Jay Lohar",
+  "license": "ISC",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "bcryptjs": "^3.0.3",
+    "connect-mongo": "^6.0.0",
+    "ejs": "^4.0.1",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "express-validator": "^7.3.1",
+    "mongodb": "^7.0.0",
+    "mongoose": "^9.1.6",
+    "multer": "^2.0.2",
+    "mysql2": "^3.16.2",
+    "nodemon": "^3.1.11",
+    "session": "^0.1.0",
+    "tailwindcss": "^4.1.18"
+  }
+}

@@ -1,0 +1,5 @@
+<form action="/favourite-list" method="POST">
+  <button type="submit" class="bg-green-300 p-2 hover:bg-green-500">Add to Favourite</button>
+  <input type="hidden" name="id" value="<%= home._id %>">
+</form>
+<a href="/rules/<%= home._id %>" class="bg-green-300 p-2 hover:bg-green-500 inline-block">Rules</a>

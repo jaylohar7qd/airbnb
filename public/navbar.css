@@ -1,0 +1,185 @@
+/* Airbnb-style Navbar */
+.airbnb-header {
+  position: sticky;
+  top: 0;
+  background: white;
+  border-bottom: 1px solid #ebebeb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  z-index: 50;
+}
+
+.airbnb-nav {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.airbnb-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #FF385C;
+  font-size: 1.5rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.airbnb-logo-icon {
+  width: 32px;
+  height: 32px;
+  background: #FF385C;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
+
+/* Navigation Links */
+.airbnb-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+}
+
+.airbnb-nav-links li {
+  margin: 0;
+}
+
+.airbnb-nav-links a,
+.airbnb-nav-links button {
+  display: inline-block;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #222222;
+  text-decoration: none;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.airbnb-nav-links a:hover,
+.airbnb-nav-links button:hover {
+  background: #f7f7f7;
+}
+
+/* Active/Primary Links */
+.airbnb-nav-links a.primary-link {
+  background: #FF385C;
+  color: white;
+}
+
+.airbnb-nav-links a.primary-link:hover {
+  background: #e00b41;
+}
+
+/* Auth Buttons */
+.airbnb-auth-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.airbnb-login-btn {
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #222222;
+  text-decoration: none;
+  border-radius: 9999px;
+  transition: background 0.2s;
+  background: transparent;
+}
+
+.airbnb-login-btn:hover {
+  background: #f7f7f7;
+}
+
+.airbnb-signup-btn {
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  background: #FF385C;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.airbnb-signup-btn:hover {
+  background: #e00b41;
+}
+
+.airbnb-logout-btn {
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #222222;
+  background: transparent;
+  border: 1px solid #dddddd;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.airbnb-logout-btn:hover {
+  background: #f7f7f7;
+  border-color: #222222;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .airbnb-nav {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+  }
+
+  .airbnb-nav-links {
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.75rem;
+    gap: 0.25rem;
+  }
+
+  .airbnb-nav-links a,
+  .airbnb-nav-links button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .airbnb-auth-buttons {
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .airbnb-logo {
+    font-size: 1.25rem;
+  }
+
+  .airbnb-logo-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .airbnb-nav-links {
+    font-size: 0.75rem;
+  }
+}

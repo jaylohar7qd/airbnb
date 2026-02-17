@@ -1,0 +1,57 @@
+<%- include('../partial-/head') %>
+  </head>
+  <body>
+      <%- include('../partial-/nav') %>
+      <main class="container mx-auto bg-white shadow-lg rounded-lg p-8 mt-10 max-w-6xl">
+          <h2 class="text-3xl text-red-500 font-bold text-center mb-6">
+              Rules for <%= home.houseName %>
+          </h2>
+          
+          <div class="mb-4">
+              <a href="/homes/<%= home._id %>" class="text-blue-500 hover:underline">
+                  &larr; Back to Home Details
+              </a>
+          </div>
+          
+          <% if (home.rulesDocument) { %>
+              <div class="border rounded-lg p-4 bg-gray-50">
+                  <h3 class="text-xl font-semibold mb-4">House Rules Document</h3>
+                  
+                  <% if (home.rulesDocument.endsWith('.pdf')) { %>
+                      <!-- PDF Document - embed using iframe -->
+                      <iframe 
+                          src="/<%= home.rulesDocument %>" 
+                          class="w-full h-screen border rounded"
+                          title="Rules Document">
+                      </iframe>
+                      <div class="mt-4">
+                          <a href="/<%= home.rulesDocument %>" 
+                             download 
+                             class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                              Download PDF
+                          </a>
+                      </div>
+                  <% } else { %>
+                      <!-- Image Document -->
+                      <img 
+                          src="/<%= home.rulesDocument %>" 
+                          alt="House Rules" 
+                          class="w-full max-w-3xl mx-auto rounded shadow">
+                      <div class="mt-4 text-center">
+                          <a href="/<%= home.rulesDocument %>" 
+                             download 
+                             class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                              Download Rules Image
+                          </a>
+                      </div>
+                  <% } %>
+              </div>
+          <% } else { %>
+              <div class="text-center py-10 text-gray-500">
+                  <p class="text-xl">No rules document has been uploaded for this property.</p>
+                  <p class="mt-2">Please contact the host for more information.</p>
+              </div>
+          <% } %>
+      </main>
+  </body>
+</html>

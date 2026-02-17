@@ -1,0 +1,45 @@
+<header class="sticky top-0 bg-white border-b border-gray-200 shadow-sm z-50">
+  <nav class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between flex-wrap">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2 text-red-500 text-2xl font-bold flex-shrink-0">
+      <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center text-white font-bold">
+        A
+      </div>
+      <span>airbnb</span>
+    </a>
+
+    <!-- Navigation Links (shown when logged in) -->
+    <% if (isLoggedIn) { %>
+      <% if (user && user.userType === 'guest') { %>
+      
+      <ul class="flex items-center gap-2 flex-wrap list-none m-0 p-0">
+        <li><a href="/store/home-list" class="inline-block px-4 py-2 text-sm font-medium text-gray-800 rounded-full hover:bg-gray-100 transition-colors">Home List</a></li>
+        <li><a href="/favourite-list" class="inline-block px-4 py-2 text-sm font-medium text-gray-800 rounded-full hover:bg-gray-100 transition-colors">Favourites</a></li>
+        <li><a href="/store/bookings" class="inline-block px-4 py-2 text-sm font-medium text-gray-800 rounded-full hover:bg-gray-100 transition-colors">Bookings</a></li>
+        <li>
+          <form action="/logout" method="POST" class="inline">
+            <button type="submit" class="px-4 py-2 text-sm font-medium text-gray-800 bg-transparent border border-gray-300 rounded-full hover:bg-gray-100 hover:border-gray-800 transition-all cursor-pointer">Logout</button>
+          </form>
+        </li>
+      </ul> <% } else { %> <ul  class="flex items-center gap-2 flex-wrap list-none m-0 p-0">
+        <li><a href="/host/host-home-list" class="inline-block px-4 py-2 text-sm font-medium text-gray-800 rounded-full hover:bg-gray-100 transition-colors">Host Homes</a></li>
+        <li><a href="/host/add-home" class="inline-block px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-full hover:bg-red-600 transition-colors">Add Home</a></li>
+        
+        <li>
+          <form action="/logout" method="POST" class="inline">
+            <button type="submit" class="px-4 py-2 text-sm font-medium text-gray-800 bg-transparent border border-gray-300 rounded-full hover:bg-gray-100 hover:border-gray-800 transition-all cursor-pointer">Logout</button>
+          </form>
+        </li>
+      </ul>
+      <% } %>
+    <% } else { %>
+      <!-- Auth Buttons (shown when not logged in) -->
+      <div class="flex gap-2 items-center">
+        <a href="/login" class="px-4 py-2 text-sm font-medium text-gray-800 rounded-full hover:bg-gray-100 transition-colors">Login</a>
+        <form action="/signup" method="GET" class="inline">
+          <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-full hover:bg-red-600 transition-colors cursor-pointer border-0">Sign Up</button>
+        </form>
+      </div>
+    <% } %>
+  </nav>
+</header>
