@@ -1,180 +1,63 @@
 /**
  * Vercel Serverless Function Handler
- * Entry point for Vercel's serverless deployment
+ * Simplified version for better reliability
  */
 
+const express = require('express');
 const path = require('path');
 
-console.log('📦 Initializing Airbnb Vercel Function...');
+// Basic app setup
+const app = express();
 
-try {
-  // Load all dependencies
-  const express = require('express');
-  const session = require('express-session');
-  const { default: mongoose } = require('mongoose');
-  const MongoStore = require('connect-mongo');
-  const multer = require('multer');
+// Environment variables
+const NODE_ENV = process.env.NODE_ENV || 'production';
+const MONGO_DB_URI = process.env.MONGO_DB_URI;
+const SESSION_SECRET = process.env.SESSION_SECRET;
 
-  // Load local modules
-  const storeRouter = require("../routes/storeRouter");
-  const hostRouter = require("../routes/hostRouter");
-  const authRouter = require("../routes/auth_Router");
-  const rootDir = require("../utils/pathUtil");
-  const errorsController = require("../controllers/errors");
-  const { setupConnectionListeners, connectDatabase } = require("../config/database");
-  const { errorHandler, AppError } = require("../middleware/errorHandler");
-  const { requestLogger } = require("../middleware/requestLogger");
+console.log('🚀 Starting Vercel Function...');
+console.log(`NODE_ENV: ${NODE_ENV}`);
+console.log(`MONGO_DB_URI: ${MONGO_DB_URI ? '✓ Set' : '✗ Missing'}`);
+console.log(`SESSION_SECRET: ${SESSION_SECRET ? '✓ Set' : '✗ Missing'}`);
 
-  console.log('✓ All modules loaded');
+// Basic middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, '../public')));
 
-  // Environment variables
-  const NODE_ENV = process.env.NODE_ENV || 'production';
-  const PORT = process.env.PORT || 3000;
-  const SESSION_SECRET = process.env.SESSION_SECRET;
-  const MONGO_DB_URI = process.env.MONGO_DB_URI;
-  const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE) || 5242880;
-
-  console.log(`\n🔍 Environment Status:`);
-  console.log(`  NODE_ENV: ${NODE_ENV}`);
-  console.log(`  SESSION_SECRET: ${SESSION_SECRET ? '✓' : '✗'}`);
-  console.log(`  MONGO_DB_URI: ${MONGO_DB_URI ? '✓' : '✗'}\n`);
-
-  const app = express();
-
-  // View engine
-  app.set('view engine', 'ejs');
-  app.set('views', path.join(__dirname, '../views'));
-
-  // Utility
-  const randomString = (len) => {
-    let str = '';
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < len; i++) str += chars[Math.floor(Math.random() * chars.length)];
-    return str;
-  };
-
-  // File upload
-  const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, '/tmp'),
-    filename: (req, file, cb) => cb(null, `${randomString(10)}-${Date.now()}-${file.originalname}`)
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    environment: NODE_ENV,
+    uptime: process.uptime()
   });
+});
 
-  const fileFilter = (req, file, cb) => {
-    const allowed = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
-    cb(null, allowed.includes(file.mimetype));
-  };
+// Basic routes
+app.get('/', (req, res) => {
+  res.json({ message: 'Airbnb API is running!' });
+});
 
-  // Middleware
-  app.use(requestLogger);
-  app.use(express.urlencoded({ limit: '50mb', extended: true }));
-  app.use(express.json({ limit: '50mb' }));
-  app.use(multer({
-    storage,
-    fileFilter,
-    limits: { fileSize: MAX_FILE_SIZE }
-  }).fields([
-    { name: 'photo', maxCount: 1 },
-    { name: 'Rulephoto', maxCount: 1 }
-  ]));
-  app.use(express.static(path.join(__dirname, '../public')));
-  app.use("/uploads", express.static('/tmp'));
-  app.use("/host/uploads", express.static('/tmp'));
+app.get('/api', (req, res) => {
+  res.json({ message: 'API endpoint working' });
+});
 
-  // Session
-  app.use(session({
-    secret: SESSION_SECRET || 'dev-secret',
-    resave: false,
-    saveUninitialized: true,
-    store: MONGO_DB_URI ? MongoStore.create({
-      mongoUrl: MONGO_DB_URI,
-      touchAfter: 86400
-    }) : undefined,
-    cookie: {
-      httpOnly: true,
-      secure: NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 86400000
-    }
-  }));
-
-  // Session context
-  app.use((req, res, next) => {
-    req.isLoggedIn = req.session.isLoggedIn || false;
-    res.locals.isLoggedIn = req.isLoggedIn;
-    res.locals.user = req.session.user || {};
-    next();
+// Error handler
+app.use((err, req, res, next) => {
+  console.error('Error:', err.message);
+  res.status(500).json({
+    status: 500,
+    message: NODE_ENV === 'production' ? 'Internal Server Error' : err.message
   });
+});
 
-  // Health check endpoint
-  app.get('/api/health', (req, res) => {
-    res.json({
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      environment: NODE_ENV,
-      uptime: process.uptime()
-    });
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    status: 404,
+    message: 'Not Found'
   });
+});
 
-  // Database connection
-  let dbConnected = false;
-  const ensureDbConnection = async (req, res, next) => {
-    if (req.path === '/api/health') return next();
-    if (!dbConnected && MONGO_DB_URI) {
-      try {
-        await connectDatabase();
-        setupConnectionListeners();
-        dbConnected = true;
-        console.log('✓ Database connected');
-      } catch (error) {
-        console.error('✗ Database error:', error.message);
-        return res.status(503).json({ status: 503, message: 'Database unavailable' });
-      }
-    }
-    next();
-  };
-
-  app.use(ensureDbConnection);
-
-  // Routes
-  app.use(authRouter);
-  app.use(storeRouter);
-  app.use("/host", (req, res, next) => {
-    if (req.isLoggedIn) return next();
-    return res.redirect("/login");
-  });
-  app.use("/host", hostRouter);
-
-  // Error handlers
-  app.use(errorsController.pageNotFound);
-  app.use(errorHandler);
-  app.use((err, req, res, next) => {
-    console.error('✗ Error:', err.message);
-    res.status(500).json({ status: 500, message: NODE_ENV === 'production' ? 'Error' : err.message });
-  });
-
-  console.log('✓ Vercel function ready\n');
-
-  module.exports = app;
-
-} catch (initError) {
-  console.error('✗ INITIALIZATION FAILED');
-  console.error(initError.message);
-  console.error(initError.stack);
-
-  // Fallback app
-  const express = require('express');
-  const fallback = express();
-
-  fallback.get('/api/health', (req, res) => {
-    res.status(500).json({
-      status: 'error',
-      message: 'Initialization failed: ' + initError.message
-    });
-  });
-
-  fallback.use((req, res) => {
-    res.status(500).json({ status: 500, message: 'App initialization failed' });
-  });
-
-  module.exports = fallback;
-}
+module.exports = app;
