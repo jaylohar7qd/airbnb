@@ -1,6 +1,6 @@
 /**
  * Vercel Serverless Function Handler
- * Simplified version for better reliability
+ * Production-ready version with proper error handling
  */
 
 const express = require('express');
@@ -9,7 +9,7 @@ const path = require('path');
 // Basic app setup
 const app = express();
 
-// Environment variables
+// Environment variables validation
 const NODE_ENV = process.env.NODE_ENV || 'production';
 const MONGO_DB_URI = process.env.MONGO_DB_URI;
 const SESSION_SECRET = process.env.SESSION_SECRET;
@@ -20,8 +20,8 @@ console.log(`MONGO_DB_URI: ${MONGO_DB_URI ? '✓ Set' : '✗ Missing'}`);
 console.log(`SESSION_SECRET: ${SESSION_SECRET ? '✓ Set' : '✗ Missing'}`);
 
 // Basic middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '../public')));
 
 // Health check endpoint
@@ -60,4 +60,5 @@ app.use((req, res) => {
   });
 });
 
+// Export for Vercel
 module.exports = app;
