@@ -124,10 +124,10 @@ app.use(session({
   secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  store: MongoStore.create({
+  store: process.env.MONGO_DB_URI ? MongoStore.create({
     mongoUrl: process.env.MONGO_DB_URI,
     touchAfter: 24 * 3600 // Lazy session update
-  }),
+  }) : undefined,
   cookie: {
     httpOnly: true,
     secure: NODE_ENV === 'production', // HTTPS only in production
