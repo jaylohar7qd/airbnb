@@ -13,7 +13,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const {default: mongoose} = require('mongoose');
-const MongoStore = require('connect-mongo');
+const MongoStore = require('connect-mongo').default;
 const multer = require('multer');
 
 // Local Module
