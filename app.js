@@ -13,7 +13,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const {default: mongoose} = require('mongoose');
-const MongoStore = require('connect-mongo').default;
+const MongoStore = require('connect-mongo');
 const multer = require('multer');
 
 // Local Module
@@ -124,7 +124,7 @@ app.use(session({
   secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  store: new MongoStore({
+  store: MongoStore.create({
     mongoUrl: process.env.MONGO_DB_URI,
     touchAfter: 24 * 3600 // Lazy session update
   }),

@@ -12,7 +12,7 @@ try {
   const express = require('express');
   const session = require('express-session');
   const { default: mongoose } = require('mongoose');
-  const MongoStore = require('connect-mongo').default;
+  const MongoStore = require('connect-mongo');
   const multer = require('multer');
 
   // Load local modules
@@ -85,7 +85,7 @@ try {
     secret: SESSION_SECRET || 'dev-secret',
     resave: false,
     saveUninitialized: true,
-    store: MONGO_DB_URI ? new MongoStore({
+    store: MONGO_DB_URI ? MongoStore.create({
       mongoUrl: MONGO_DB_URI,
       touchAfter: 86400
     }) : undefined,

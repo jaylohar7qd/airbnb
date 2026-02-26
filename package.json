@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tailwindcss -i ./public/input.css -o ./public/output.css --watch",
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "build": "npm install",
+    "vercel-build": "npm install"
   },
   "author": "Jay Lohar",
   "license": "ISC",
