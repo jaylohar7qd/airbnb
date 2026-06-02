@@ -99,11 +99,11 @@
             <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Account Type</h2>
             <div class="flex gap-4">
               <label class="flex items-center space-x-3 cursor-pointer bg-gray-50 rounded-lg px-4 py-3 border-2 border-gray-200 hover:border-red-400 transition duration-200 flex-1">
-                <input type="radio" name="userType" value="guest" id="guest" class="w-4 h-4 text-red-500 focus:ring-red-500 " checked=<% oldInput.userType === "guest"  %> />
+                <input type="radio" name="userType" value="guest" id="guest" class="w-4 h-4 text-red-500 focus:ring-red-500" <%= (!oldInput.userType || oldInput.userType === 'guest') ? 'checked' : '' %> />
                 <span class="font-medium text-gray-700">Guest</span>
               </label>
-              <label class="flex items-center space-x-3 cursor-pointer bg-gray-50 rounded-lg px-4 py-3 border-2 border-gray-200 hover:border-red-400 transition duration-200 flex-1"/>
-                <input type="radio" name="userType" value="host" id="host" class="w-4 h-4 text-red-500 focus:ring-red-500" checked=<% oldInput.userType === "host" %>/>
+              <label class="flex items-center space-x-3 cursor-pointer bg-gray-50 rounded-lg px-4 py-3 border-2 border-gray-200 hover:border-red-400 transition duration-200 flex-1">
+                <input type="radio" name="userType" value="host" id="host" class="w-4 h-4 text-red-500 focus:ring-red-500" <%= oldInput.userType === 'host' ? 'checked' : '' %> />
                 <span class="font-medium text-gray-700">Host</span>
               </label>
             </div>

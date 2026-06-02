@@ -13,7 +13,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const {default: mongoose} = require('mongoose');
-const MongoStore = require('connect-mongo');
+const { MongoStore } = require('connect-mongo');
 const multer = require('multer');
 
 // Local Module
@@ -120,14 +120,14 @@ app.use("/host/uploads", express.static(path.join(rootDir, UPLOAD_DIR)));
 
 
 // ========== Session Configuration ==========
+app.set('trust proxy', 1); // Trust first proxy (needed for Vercel/Heroku secure cookies)
 app.use(session({
   secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  store: process.env.MONGO_DB_URI ? MongoStore.create({
-    mongoUrl: process.env.MONGO_DB_URI,
-    touchAfter: 24 * 3600 // Lazy session update
-  }) : undefined,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_DB_URI
+  }),
   cookie: {
     httpOnly: true,
     secure: NODE_ENV === 'production', // HTTPS only in production

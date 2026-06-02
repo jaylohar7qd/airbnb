@@ -6,7 +6,7 @@
 const mongoose = require('mongoose');
 
 // Get configuration from environment
-const MONGO_DB_URI = process.env.MONGO_DB_URI;
+const MONGO_DB_URI = process.env.MONGO_DB_URI?.trim();
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 /**
@@ -17,6 +17,10 @@ const connectDatabase = async () => {
   try {
     if (!MONGO_DB_URI) {
       throw new Error('MONGO_DB_URI environment variable is not defined');
+    }
+
+    if (MONGO_DB_URI.includes('<db_password>') || MONGO_DB_URI.includes('<') || MONGO_DB_URI.includes('>')) {
+      throw new Error('MONGO_DB_URI still contains a placeholder. Replace <db_password> with your real MongoDB Atlas password, URL-encoded if it has special characters.');
     }
 
     const connectionOptions = {

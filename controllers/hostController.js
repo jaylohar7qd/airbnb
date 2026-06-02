@@ -51,12 +51,12 @@ exports.postAddHome = (req, res, next) => {
   if (!req.files || !req.files.photo){
     return res.status(422).send("No images provided")
   }
-  const photo = req.files.photo[0].path;
+  const photo = '/' + req.files.photo[0].path.replace(/\\/g, '/');
   
   // Get rules document path if uploaded
   let rulesDocument = null;
   if (req.files.Rulephoto && req.files.Rulephoto[0]) {
-    rulesDocument = req.files.Rulephoto[0].path;
+    rulesDocument = '/' + req.files.Rulephoto[0].path.replace(/\\/g, '/');
   }
   
   const home = new Home({houseName, price, location, rating, photo, description, rulesDocument});
@@ -77,8 +77,8 @@ exports.postEditHome = (req,res,next)=>{
     
     // Handle photo upload
     if (req.files && req.files.photo && req.files.photo[0]){
-      const oldPhoto = home.photo;
-      home.photo = req.files.photo[0].path;
+      const oldPhoto = home.photo ? home.photo.replace(/^\//, '') : null;
+      home.photo = '/' + req.files.photo[0].path.replace(/\\/g, '/');
       // Delete old photo if it exists
       if (oldPhoto) {
         fs.unlink(oldPhoto, (err) => {
@@ -91,15 +91,13 @@ exports.postEditHome = (req,res,next)=>{
     
     // Handle rules document upload
     if (req.files && req.files.Rulephoto && req.files.Rulephoto[0]){
-      const oldRulesDoc = home.rulesDocument;
-      home.rulesDocument = req.files.Rulephoto[0].path;
+      const oldRulesDoc = home.rulesDocument ? home.rulesDocument.replace(/^\//, '') : null;
+      home.rulesDocument = '/' + req.files.Rulephoto[0].path.replace(/\\/g, '/');
       // Delete old rules document if it exists
       if (oldRulesDoc) {
         fs.unlink(oldRulesDoc, (err) => {
           if (err) {
             console.log("Error while deleting the old rules document", err);
-          }else {
-            home.photo = req.file.path;
           }
         });
       }
