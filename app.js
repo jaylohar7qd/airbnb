@@ -12,8 +12,13 @@ const path = require('path');
 // External Module
 const express = require('express');
 const session = require('express-session');
-const {default: mongoose} = require('mongoose');
-const { MongoStore } = require('connect-mongo');
+const mongoose = require('mongoose');
+
+const connectMongo = require("connect-mongo");
+const MongoStore = connectMongo.MongoStore;
+
+
+
 const multer = require('multer');
 
 // Local Module
