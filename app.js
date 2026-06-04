@@ -15,9 +15,14 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 
 const connectMongo = require("connect-mongo");
-const MongoStore = connectMongo.MongoStore;
+const connectMongo = require("connect-mongo");
 
-console.log("MongoStore:", MongoStore);
+console.log("connectMongo =", connectMongo);
+
+const MongoStore =
+  connectMongo.MongoStore ||
+  connectMongo.default ||
+  connectMongo;
 console.log("MongoStore.create:", MongoStore.create);
 
 const multer = require('multer');
