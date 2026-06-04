@@ -17,7 +17,8 @@ const mongoose = require('mongoose');
 const connectMongo = require("connect-mongo");
 const MongoStore = connectMongo.MongoStore;
 
-
+console.log("MongoStore:", MongoStore);
+console.log("MongoStore.create:", MongoStore.create);
 
 const multer = require('multer');
 
