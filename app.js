@@ -15,7 +15,7 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 
 const connectMongo = require("connect-mongo");
-const connectMongo = require("connect-mongo");
+
 
 console.log("connectMongo =", connectMongo);
 
